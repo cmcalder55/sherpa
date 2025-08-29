@@ -44,6 +44,8 @@ ENV/
 
 # Environment variables
 .env
+.github/
+.vscode/
 
 # Testing
 .coverage
