@@ -6,11 +6,29 @@ const { electronAPI } = require('@electron-toolkit/preload')
 // Custom APIs for renderer
 const api = {
   loadData: () => {
-    const data = JSON.parse(
-      fs.readFileSync(path.join(__dirname, '..', '..', 'data', 'compass.json'))
-    )
-    console.log('Loaded Labyrinth Data:', data) // Log the data in the preload script
-    return data
+    try {
+      const filePath = path.join(__dirname, '..', '..', 'data', 'compass.json')
+
+      // Check if file exists
+      if (!fs.existsSync(filePath)) {
+        console.error('Data file not found:', filePath)
+        return { data: [], lastModified: null }
+      }
+
+      // Read and parse file
+      const fileContent = fs.readFileSync(filePath, 'utf-8')
+      const data = JSON.parse(fileContent)
+      const stats = fs.statSync(filePath)
+
+      console.log('Loaded Labyrinth Data:', data)
+      return {
+        data: Array.isArray(data) ? data : [],
+        lastModified: stats.mtime.getTime()
+      }
+    } catch (error) {
+      console.error('Error loading data:', error)
+      return { data: [], lastModified: null }
+    }
   }
 }
 // Use `contextBridge` APIs to expose Electron APIs to
