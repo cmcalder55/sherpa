@@ -3,33 +3,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
 
 const Graph = () => {
-  const containerRef = useRef()
   const svgRef = useRef()
-  const [dimensions, setDimensions] = useState({ width: 800, height: 600 })
+  const [dimensions] = useState({ width: 400, height: 200 })
   const [graphDataOptions, setGraphDataOptions] = useState([]) // State to store the loaded data
   const [selectedGraph, setSelectedGraph] = useState(null) // State for the selected graph
   const [globalExtents, setGlobalExtents] = useState({ xExtent: [0, 1], yExtent: [0, 1] }) // Global extents for scaling
   const [timeUntilRefresh, setTimeUntilRefresh] = useState('')
   const [lastModified, setLastModified] = useState(null)
-
-  // Handle window resize
-  useEffect(() => {
-    const handleResize = () => {
-      if (containerRef.current) {
-        const containerWidth = containerRef.current.clientWidth
-        const containerHeight = window.innerHeight - 200 // Leave space for controls
-        setDimensions({
-          width: Math.max(800, containerWidth - 40), // Minimum width of 800px
-          height: Math.max(600, containerHeight) // Minimum height of 600px
-        })
-      }
-    }
-
-    window.addEventListener('resize', handleResize)
-    handleResize() // Initial size
-
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
 
   // Function to calculate next refresh time (12 PM GMT+12)
   const getNextRefreshTime = () => {
