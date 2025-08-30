@@ -1,8 +1,14 @@
+import type { GraphData } from './graph.types';
+import { electronAPI } from '@electron-toolkit/preload';
+
+export interface WindowAPI {
+  loadData: () => {
+    data: GraphData[];
+    lastModified: number | null;
+  }
+}
+
 interface Window {
-  api: {
-    loadData: () => {
-      data: import('./renderer/components/Graph/types/graph.types').GraphData[];
-      lastModified: number;
-    };
-  };
+  electron: typeof electronAPI;
+  api: WindowAPI;
 }

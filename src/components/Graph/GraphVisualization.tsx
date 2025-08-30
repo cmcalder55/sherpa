@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import { Node, Edge } from '../types/graph.types';
-import { config } from '../../../../main/config/app.config';
+import type { Node, Edge } from '@/types/graph.types';
+import { config } from '../../config/app.config';
 
 interface Props {
   nodes: Node[];
@@ -21,11 +21,11 @@ export const GraphVisualization: React.FC<Props> = ({
   useEffect(() => {
     if (!svgRef.current) return;
 
-    const { style } = config.graph;
+    const { nodeRadius, edgeWidth } = config.graph;
     const svg = d3
       .select(svgRef.current)
-      .attr('width', config.graph.dimensions.width)
-      .attr('height', config.graph.dimensions.height)
+      .attr('width', config.graph.width)
+      .attr('height', config.graph.height)
       .style('border', '1px solid black');
 
     // Clear previous content
@@ -37,8 +37,8 @@ export const GraphVisualization: React.FC<Props> = ({
       .data(edges)
       .enter()
       .append('line')
-      .attr('stroke', style.edges.stroke)
-      .attr('stroke-width', style.edges.strokeWidth)
+      .attr('stroke', '#999')
+      .attr('stroke-width', edgeWidth)
       .attr('x1', (d) => xScale(nodes.find((n) => n.id === d.source)?.x || 0))
       .attr('y1', (d) => yScale(nodes.find((n) => n.id === d.source)?.y || 0))
       .attr('x2', (d) => xScale(nodes.find((n) => n.id === d.target)?.x || 0))
@@ -54,15 +54,15 @@ export const GraphVisualization: React.FC<Props> = ({
 
     node
       .append('circle')
-      .attr('r', style.nodes.radius)
-      .style('fill', style.nodes.fill);
+      .attr('r', nodeRadius)
+      .style('fill', '#1f77b4');
 
     // Add labels
     node
       .append('text')
       .attr('dy', '.35em')
-      .attr('x', style.labels.offset)
-      .style('fill', style.labels.fill)
+      .attr('x', nodeRadius + 2)
+      .style('fill', '#666')
       .text((d) => d.id);
   }, [nodes, edges, xScale, yScale]);
 

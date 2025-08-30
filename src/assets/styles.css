@@ -1,0 +1,9 @@
+.app {
+  text-align: center;
+  padding: 20px;
+}
+
+.graph-container {
+  margin: 20px auto;
+  max-width: 1200px;
+}

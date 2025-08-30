@@ -1,9 +1,8 @@
 import React from 'react';
-import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface Props {
   timeUntilRefresh: string;
-  lastModified: number | null;
+  lastModified: string;
 }
 
 export const RefreshTimer: React.FC<Props> = ({ timeUntilRefresh, lastModified }) => {

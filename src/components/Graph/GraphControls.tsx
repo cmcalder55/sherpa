@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraphData } from '../types/graph.types';
+import { GraphData } from '../../types/graph.types';
 
 interface Props {
   options: GraphData[];
