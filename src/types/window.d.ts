@@ -1,4 +1,4 @@
-import type { GraphData } from './graph.types';
+import type { GraphData } from '../components/Graph/types/graph.types';
 import { electronAPI } from '@electron-toolkit/preload';
 
 export interface WindowAPI {

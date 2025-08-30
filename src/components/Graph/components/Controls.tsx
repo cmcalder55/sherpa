@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraphData } from '../../types/graph.types';
+import { GraphData } from '../types/graph.types';
 
 interface Props {
   options: GraphData[];
@@ -7,7 +7,7 @@ interface Props {
   onSelect: (graph: GraphData) => void;
 }
 
-export const GraphControls: React.FC<Props> = ({ 
+export const Controls: React.FC<Props> = ({ 
   options, 
   selectedGraph, 
   onSelect 
@@ -32,7 +32,7 @@ export const GraphControls: React.FC<Props> = ({
             borderRadius: '5px'
           }}
         >
-          {option.level || `Graph ${index + 1}`}
+          {option.level}
         </button>
       ))}
     </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as d3 from 'd3';
-import type { GraphData, Node } from '@/types/graph.types';
+import type { GraphData, Node } from '../types/graph.types';
 
 const emptyGraph: GraphData = {
   level: '',

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import type { Node, Edge } from '@/types/graph.types';
-import { config } from '../../config/app.config';
+import type { Node, Edge } from '../types/graph.types';
+import { config } from '../../../config/app.config';
 
 interface Props {
   nodes: Node[];
@@ -10,7 +10,7 @@ interface Props {
   yScale: d3.ScaleLinear<number, number>;
 }
 
-export const GraphVisualization: React.FC<Props> = ({
+export const Visualization: React.FC<Props> = ({
   nodes,
   edges,
   xScale,

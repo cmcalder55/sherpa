@@ -1,8 +1,8 @@
 import React from 'react';
-import { GraphVisualization } from './GraphVisualization';
-import { GraphControls } from './GraphControls';
-import { RefreshTimer } from './RefreshTimer';
-import { useGraphData, useAutoRefresh } from '../../hooks';
+import { Visualization } from './components/Visualization';
+import { Controls } from './components/Controls';
+import { RefreshTimer } from './components/RefreshTimer';
+import { useGraphData, useAutoRefresh } from './hooks';
 
 export const Graph: React.FC = () => {
   const { data, selectedGraph, loading, error, selectGraph, getScales } = useGraphData();
@@ -44,12 +44,12 @@ export const Graph: React.FC = () => {
           {isRefreshing ? 'Stop Auto-Refresh' : 'Start Auto-Refresh'}
         </button>
       </div>
-      <GraphControls
+      <Controls
         options={data}
         selectedGraph={selectedGraph}
         onSelect={selectGraph}
       />
-      <GraphVisualization
+      <Visualization
         nodes={selectedGraph.nodes}
         edges={selectedGraph.edges}
         xScale={xScale}
