@@ -1,51 +1,67 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export const useAutoRefresh = () => {
-  const [lastModified, setLastModified] = useState<string>('');
+  const [lastModified, setLastModified] = useState<string>(new Date().toISOString());
   const [timeUntilRefresh, setTimeUntilRefresh] = useState<string>('');
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [interval, setInterval] = useState(30000); // 30 seconds default
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
+    const updateTimer = () => {
+      const now = new Date();
+      
+      // Get current time in New Zealand timezone
+      const nzTime = new Date(now.toLocaleString("en-US", {timeZone: "Pacific/Auckland"}));
+      
+      // Create next 12:00:30 PM NZ time (12:00 PM + 30 seconds)
+      const nextRefresh = new Date(nzTime);
+      nextRefresh.setHours(12, 0, 30, 0); // 12:00:30 PM
+      
+      // If we've already passed 12:00:30 PM today, set for tomorrow
+      if (nzTime.getHours() > 12 || (nzTime.getHours() === 12 && nzTime.getMinutes() > 0) || (nzTime.getHours() === 12 && nzTime.getMinutes() === 0 && nzTime.getSeconds() >= 30)) {
+        nextRefresh.setDate(nextRefresh.getDate() + 1);
+      }
+      
+      // Convert back to local time for comparison
+      const nextRefreshLocal = new Date(nextRefresh.getTime() - (nzTime.getTimezoneOffset() - now.getTimezoneOffset()) * 60000);
+      
+      const timeUntilNext = nextRefreshLocal.getTime() - now.getTime();
 
-    if (isRefreshing) {
-      const updateTimer = () => {
-        const now = new Date().getTime();
-        const lastMod = lastModified ? new Date(lastModified).getTime() : now;
-        const diff = now - lastMod;
-        const nextRefresh = interval - diff;
-
-        if (nextRefresh <= 0) {
-          setTimeUntilRefresh('Refreshing...');
-          // Trigger refresh logic here
+      if (timeUntilNext <= 0) {
+        setTimeUntilRefresh('Refreshing...');
+        setLastModified(new Date().toISOString());
+      } else {
+        const totalSeconds = Math.ceil(timeUntilNext / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        
+        if (hours > 0) {
+          setTimeUntilRefresh(`${hours}h ${minutes}m ${seconds}s`);
+        } else if (minutes > 0) {
+          setTimeUntilRefresh(`${minutes}m ${seconds}s`);
         } else {
-          setTimeUntilRefresh(`${Math.ceil(nextRefresh / 1000)}s`);
+          setTimeUntilRefresh(`${seconds}s`);
         }
-      };
-
-      updateTimer();
-      timer = setTimeout(updateTimer, 1000);
-    }
-
-    return () => {
-      if (timer) {
-        clearTimeout(timer);
       }
     };
-  }, [isRefreshing, lastModified, interval]);
 
-  const toggleRefresh = () => {
-    setIsRefreshing(prev => !prev);
-  };
+    // Update immediately
+    updateTimer();
+    
+    // Set up interval to update every second
+    intervalRef.current = setInterval(updateTimer, 1000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, []);
 
   return {
     timeUntilRefresh,
     lastModified,
-    setLastModified,
-    isRefreshing,
-    interval,
-    setInterval,
-    toggleRefresh
+    setLastModified
   };
 };

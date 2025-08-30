@@ -6,7 +6,7 @@ import { useGraphData, useAutoRefresh } from './hooks';
 
 export const Graph: React.FC = () => {
   const { data, selectedGraph, loading, error, selectGraph, getScales } = useGraphData();
-  const { timeUntilRefresh, lastModified, isRefreshing, toggleRefresh } = useAutoRefresh();
+  const { timeUntilRefresh, lastModified } = useAutoRefresh();
 
   if (loading) {
     return <div>Loading graph data...</div>;
@@ -29,20 +29,6 @@ export const Graph: React.FC = () => {
           timeUntilRefresh={timeUntilRefresh}
           lastModified={lastModified}
         />
-        <button 
-          onClick={toggleRefresh}
-          style={{
-            padding: '0.5rem 1rem',
-            marginLeft: '1rem',
-            backgroundColor: isRefreshing ? '#dc3545' : '#28a745',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          {isRefreshing ? 'Stop Auto-Refresh' : 'Start Auto-Refresh'}
-        </button>
       </div>
       <Controls
         options={data}

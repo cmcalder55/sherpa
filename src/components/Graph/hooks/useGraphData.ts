@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as d3 from 'd3';
 import type { GraphData, Node } from '../types/graph.types';
+import { config } from '../../../config/app.config';
 
 const emptyGraph: GraphData = {
   level: '',
@@ -22,8 +23,19 @@ export const useGraphData = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const result = await response.json();
-        setData(result);
-        setSelectedGraph(result[0]);
+        
+        // Parse string coordinates to numbers
+        const parsedData = result.map((graph: any) => ({
+          ...graph,
+          nodes: graph.nodes.map((node: any) => ({
+            ...node,
+            x: parseFloat(node.x),
+            y: parseFloat(node.y)
+          }))
+        }));
+        
+        setData(parsedData);
+        setSelectedGraph(parsedData[0]);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to load data'));
       } finally {
@@ -42,13 +54,17 @@ export const useGraphData = () => {
     const xExtent = d3.extent(nodes, d => d.x) as [number, number];
     const yExtent = d3.extent(nodes, d => d.y) as [number, number];
 
+    // Account for node radius in the range to ensure nodes stay within bounds
+    const { nodeRadius, width, height } = config.graph;
+    const padding = 40; // Increased padding from the edges for more breathing room
+    
     const xScale = d3.scaleLinear()
       .domain(xExtent)
-      .range([50, 750]);
+      .range([nodeRadius + padding, width - nodeRadius - padding]);
 
     const yScale = d3.scaleLinear()
       .domain(yExtent)
-      .range([50, 550]);
+      .range([nodeRadius + padding, height - nodeRadius - padding]);
 
     return { xScale, yScale };
   };
